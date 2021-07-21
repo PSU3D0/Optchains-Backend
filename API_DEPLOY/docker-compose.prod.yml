@@ -1,0 +1,31 @@
+version: '2.2'
+
+services:
+  web:
+    build:
+        context: ../OptchainBackend
+        dockerfile: Dockerfile.api.prod
+    image: 329373141069.dkr.ecr.us-east-1.amazonaws.com/optchain-ec2:web
+    command: python deployment_start.py
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - updater
+  updater:
+    build:
+        context: ../OptchainBackend
+        dockerfile: Dockerfile.updater.prod
+    image: 329373141069.dkr.ecr.us-east-1.amazonaws.com/optchain-ec2:updater
+    command: python updatelauncher.py runserver --noreload
+    env_file:
+      - ./.env.prod
+    cpus: '0.1'
+  nginx:
+    build: ./nginx
+    image: 329373141069.dkr.ecr.us-east-1.amazonaws.com/optchain-ec2:nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web

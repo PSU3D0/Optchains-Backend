@@ -1,0 +1,5 @@
+Django
+yfinance
+psycopg2-binary
+schedule
+holidays==0.10.4
